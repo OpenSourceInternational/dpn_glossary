@@ -27,6 +27,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * @package DpnGlossary
@@ -75,6 +76,9 @@ class ParserService implements SingletonInterface
      */
     public function __construct()
     {
+        // class HTML5DOMDocument
+        $extPath = ExtensionManagementUtility::extPath('dpn_glossary');
+        require_once($extPath . 'Resources/Private/Libraries/html5DomDocument/autoload.php');
         // Get Configuration Manager
         /** @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManager $configurationManager */
         $configurationManager = ObjectUtility::makeInstance(ConfigurationManager::class);
@@ -214,7 +218,7 @@ class ParserService implements SingletonInterface
         }
 
         //Create new DOMDocument
-        $DOM = new \DOMDocument();
+        $DOM = new \IvoPetkov\HTML5DOMDocument();
 
         // Prevent crashes caused by HTML5 entities with internal errors
         libxml_use_internal_errors(true);
@@ -299,9 +303,7 @@ class ParserService implements SingletonInterface
             '',
             ParserUtility::protectScriptsAndCommentsFromDOMReverse(
                 ParserUtility::protectLinkAndSrcPathsFromDOMReverse(
-                    ParserUtility::domHtml5Repairs(
-                        $DOM->saveHTML()
-                    )
+                    $DOM->saveHTML()
                 )
             )
         );

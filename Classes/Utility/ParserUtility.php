@@ -15,6 +15,7 @@ namespace Featdd\DpnGlossary\Utility;
  ***/
 
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * @package DpnGlossary
@@ -119,8 +120,12 @@ class ParserUtility implements SingletonInterface
      */
     public static function domTextReplacer(\DOMText $DOMText, string $replacement): void
     {
+        //class HTML5DOMDocument
+        $extPath = ExtensionManagementUtility::extPath('dpn_glossary');
+        require_once($extPath . 'Resources/Private/Libraries/html5DomDocument/autoload.php');
+        
         if (false === empty(trim($replacement))) {
-            $tempDOM = new \DOMDocument();
+            $tempDOM = new \IvoPetkov\HTML5DOMDocument();
             // use XHTML tag for avoiding UTF-8 encoding problems
             $tempDOM->loadHTML('<?xml encoding="UTF-8">' . '<!DOCTYPE html><html><body><div id="replacement">' . $replacement . '</div></body></html>');
 
@@ -134,14 +139,5 @@ class ParserUtility implements SingletonInterface
 
             $DOMText->parentNode->replaceChild($replacementNode, $DOMText);
         }
-    }
-
-    /**
-     * @param string $html
-     * @return string
-     */
-    public static function domHtml5Repairs(string $html): string
-    {
-        return preg_replace('/(<picture.*?>.*?)((<\/source>)+)(.*?<\/picture>)/is', '$1$4', $html);
     }
 }
