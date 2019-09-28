@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Featdd\DpnGlossary\Updates;
 
 /***
@@ -8,11 +10,13 @@ namespace Featdd\DpnGlossary\Updates;
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2018 Daniel Dorndorf <dorndorf@featdd.de>
+ *  (c) 2019 Daniel Dorndorf <dorndorf@featdd.de>
  *
  ***/
 
 use Featdd\DpnGlossary\Domain\Model\Term;
+use Featdd\DpnGlossary\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\DataHandling\Model\RecordStateFactory;
 use TYPO3\CMS\Core\DataHandling\SlugHelper;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -72,11 +76,11 @@ class SlugUpdateWizard extends AbstractUpdateWizard
         foreach ($terms as $term) {
             $termUid = (int) $term['uid'];
             $termPid = (int) $term['pid'];
-            $termLanguageUid = (int) $term['sys_language_uid'];
             $termSlug = $slugHelper->generate($term, $termPid);
+            $state = RecordStateFactory::forName(Term::TABLE)->fromArray($term, $termPid, $termUid);
 
             try {
-                if (false === $slugHelper->isUniqueInSite($termSlug, $termUid, 0, $termLanguageUid)) {
+                if (false === $slugHelper->isUniqueInSite($termSlug, $state)) {
                     $termSlug .= '-' . $termUid;
                 }
             } catch (SiteNotFoundException $e) {
@@ -91,10 +95,9 @@ class SlugUpdateWizard extends AbstractUpdateWizard
                         'uid',
                         $queryBuilder->createNamedParameter($termUid, \PDO::PARAM_INT)
                     )
-                );
+                )
+                ->execute();
         }
-
-        $queryBuilder->execute();
 
         return true;
     }

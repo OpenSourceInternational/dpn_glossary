@@ -12,6 +12,7 @@ return [
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l10n_parent',
         'transOrigDiffSourceField' => 'l10n_diffsource',
+        'translationSource' => 'l10n_source',
         'delete' => 'deleted',
         'enablecolumns' => [
             'disabled' => 'hidden',
@@ -28,7 +29,7 @@ return [
         '1' => ['showitem' => 'sys_language_uid, --palette--;;hidden_exludefromparsing_casesensitive, name, url_segment, tooltiptext, term_mode, term_link, synonyms, descriptions, term_type, term_lang, media, --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'],
     ],
     'palettes' => [
-        'hidden_exludefromparsing_casesensitive' => ['showitem' => 'hidden, case_sensitive, exclude_from_parsing'],
+        'hidden_exludefromparsing_casesensitive' => ['showitem' => 'hidden, case_sensitive, --linebreak--, max_replacements, exclude_from_parsing'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -40,7 +41,7 @@ return [
                 'special' => 'languages',
                 'items' => [
                     [
-                        'LLL:EXT:lang/locallang_general.xlf:LGL.allLanguages',
+                        'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
                         -1,
                         'flags-multiple',
                     ],
@@ -81,9 +82,13 @@ return [
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
             'config' => [
                 'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'default' => 0,
                 'items' => [
-                    '1' => [
-                        '0' => 'LLL:EXT:lang/locallang_core.xlf:labels.enabled',
+                    [
+                        0 => '',
+                        1 => '',
+                        'invertStateDisplay' => false,
                     ],
                 ],
             ],
@@ -231,12 +236,15 @@ return [
             'label' => 'LLL:EXT:dpn_glossary/Resources/Private/Language/locallang.xlf:tx_dpnglossary_domain_model_term.exclude_from_parsing',
             'config' => [
                 'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'default' => 0,
                 'items' => [
-                    '1' => [
-                        '0' => 'LLL:EXT:lang/locallang_core.xlf:labels.enabled',
+                    [
+                        0 => '',
+                        1 => '',
+                        'invertStateDisplay' => false,
                     ],
                 ],
-                'default' => 0,
             ],
         ],
         'case_sensitive' => [
@@ -244,12 +252,28 @@ return [
             'label' => 'LLL:EXT:dpn_glossary/Resources/Private/Language/locallang.xlf:tx_dpnglossary_domain_model_term.case_sensitive',
             'config' => [
                 'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'default' => 0,
                 'items' => [
-                    '1' => [
-                        '0' => 'LLL:EXT:lang/locallang_core.xlf:labels.enabled',
+                    [
+                        0 => '',
+                        1 => '',
+                        'invertStateDisplay' => false,
                     ],
                 ],
-                'default' => 0,
+            ],
+        ],
+        'max_replacements' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:dpn_glossary/Resources/Private/Language/locallang.xlf:tx_dpnglossary_domain_model_term.max_replacements',
+            'config' => [
+                'type' => 'input',
+                'default' => -1,
+                'size' => 10,
+                'eval' => 'int',
+                'range' => [
+                    'lower' => -1,
+                ],
             ],
         ],
         'descriptions' => [

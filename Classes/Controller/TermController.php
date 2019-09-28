@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Featdd\DpnGlossary\Controller;
 
 /***
@@ -8,12 +10,14 @@ namespace Featdd\DpnGlossary\Controller;
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2018 Daniel Dorndorf <dorndorf@featdd.de>
+ *  (c) 2019 Daniel Dorndorf <dorndorf@featdd.de>
  *
  ***/
 
 use Featdd\DpnGlossary\Domain\Model\Term;
 use Featdd\DpnGlossary\Domain\Repository\TermRepository;
+use Featdd\DpnGlossary\PageTitle\TermPageTitleProvider;
+use Featdd\DpnGlossary\Utility\ObjectUtility;
 use Featdd\DpnGlossary\ViewHelpers\Widget\Controller\PaginateController;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -52,7 +56,7 @@ class TermController extends ActionController
 
     public function previewNewestAction(): void
     {
-        $limit = (integer) $this->settings['previewlimit'];
+        $limit = (int) $this->settings['previewlimit'];
 
         if (0 >= $limit) {
             $limit = TermRepository::DEFAULT_LIMIT;
@@ -80,7 +84,7 @@ class TermController extends ActionController
 
     public function previewSelectedAction(): void
     {
-        $previewSelectedUids = GeneralUtility::trimExplode(',', $this->settings['previewSelected']);
+        $previewSelectedUids = GeneralUtility::intExplode(',', $this->settings['previewSelected']);
 
         $this->view->assign(
             'terms',
@@ -90,9 +94,8 @@ class TermController extends ActionController
 
     /**
      * @param \Featdd\DpnGlossary\Domain\Model\Term $term
-     * @param integer $pageUid
      */
-    public function showAction(Term $term, $pageUid = null): void
+    public function showAction(Term $term): void
     {
         if ('pagination' === $this->settings['listmode']) {
             $this->view->assign(
@@ -104,10 +107,10 @@ class TermController extends ActionController
             );
         }
 
-        if ((int) $this->settings['detailPage'] !== $pageUid) {
-            $this->view->assign('pageUid', $pageUid);
-        }
-
         $this->view->assign('term', $term);
+
+        /** @var \Featdd\DpnGlossary\PageTitle\TermPageTitleProvider $pageTitleProvider */
+        $pageTitleProvider = ObjectUtility::makeInstance(TermPageTitleProvider::class);
+        $pageTitleProvider->setTitle($term->getName());
     }
 }
