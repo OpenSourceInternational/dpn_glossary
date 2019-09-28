@@ -10,6 +10,23 @@
 ChangeLog
 ---------
 
+v3.0.4
+  - Add page title provider
+  - Bugfix for html5 picture issues
+  - Bugfix for cache identifier
+  - Max replacement option for each term
+  - TCA optimizations
+  - Code refactorings
+
+v3.0.3
+  - Update composer.json
+
+v3.0.2
+  - Bugfix for upgrade wizard
+
+v3.0.1
+  - Fix upgrade wizard for TYPO3 9.5.1 due to broken slug helper method
+
 v3.0.0
   - Compatibility to 9.5 LTS
   - Add slug field for routing (migration comes with the install wizard)
